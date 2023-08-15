@@ -10,6 +10,8 @@ function getChecklistItems() {
   // Create a new Google Sheet
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
 
+  // Clear the existing content in the sheet
+  sheet.clear();
 
   // Get all files in the Drive
   var files = DriveApp.getFiles();
@@ -17,12 +19,15 @@ function getChecklistItems() {
   // Set the headers for the sheet
   sheet.appendRow(['File Name', 'Checklist Item']);
 
+  // Get your email address
+  var myEmail = Session.getActiveUser().getEmail();
+
   // Iterate over each file
   while (files.hasNext()) {
     var file = files.next();
 
-    // Check if the file is a Google Doc
-    if (file.getMimeType() == "application/vnd.google-apps.document") {
+    // Check if the file is a Google Doc and was created by you
+    if (file.getMimeType() == "application/vnd.google-apps.document" && file.getOwner().getEmail() == myEmail) {
       // Open the document
       var doc = DocumentApp.openById(file.getId());
 
